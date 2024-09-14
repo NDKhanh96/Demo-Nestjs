@@ -3,7 +3,6 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import type { GeneratedSecret } from 'speakeasy';
 import * as speakeasy from 'speakeasy';
-import { ArtistsService } from 'src/artists/artists.service';
 import type { LoginDTO } from 'src/auth/dto/login.dto';
 import type { Enable2FAType, PayloadType } from 'src/types';
 import { UsersService } from 'src/users/users.service';
@@ -14,7 +13,6 @@ export class AuthService {
     constructor(
     private userService: UsersService,
     private jwtService: JwtService,
-    private artistsService: ArtistsService,
     ) {}
 
     async login(
@@ -33,11 +31,9 @@ export class AuthService {
         }
 
         delete user.password;
-        const artist = await this.artistsService.findArtist(user.id);
         const payload: PayloadType = {
             email: user.email,
             userId: user.id,
-            artistId: artist?.id,
         };
 
         if (user.enable2FA && user.twoFASecret) {
